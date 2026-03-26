@@ -1,0 +1,22 @@
+.buttoncardclick{
+    cursor: pointer;
+    height: 20rem;
+    width: 20rem;
+    cursor: pointer;
+    border: 5px solid blanchedalmond;
+    object-fit: fill;
+  }
+
+  .buttoncardclick:hover{
+    background-color: darkgoldenrod;
+    opacity: 20;
+  }
+  .paper-custom:hover{
+cursor: pointer;
+background-color: antiquewhite;
+  }
+
+  .card-image:hover{
+    cursor: pointer;
+background-color: antiquewhite;
+  }

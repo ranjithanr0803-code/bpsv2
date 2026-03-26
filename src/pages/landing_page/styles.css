@@ -1,0 +1,27 @@
+@keyframes slideInLeft {
+    from {
+      transform: translateX(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+  
+
+  .image-auto{
+    padding: 10;
+    margin-bottom: 10%;
+    height: 70%;
+    width: 100%;
+
+margin-top: 17%;
+overflow: hidden;
+margin-left: 1%;
+margin-right: 1%;
+    transform: rotate(-23deg); 
+        /* border: 5px solid #e3cb44;  */
+        border-radius: 2%;
+        animation: "slideInLeft 2s ease-in-out",
+  }

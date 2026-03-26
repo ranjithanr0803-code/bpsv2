@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    // ... other options
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src"], // More robust than "/src"
+      "@common/*": ["./src/components"], // More robust than "/src"
+      "@pages/*": ["./src/pages"], // More robust than "/src"
+      "@assets/*": ["./src/assets"], // More robust than "/src"
+      "@utils/*": ["./src/utils"], // More robust than "/src"
+      "@hooks/*": ["./src/hooks"], // More robust than "/src"
+      "@services/*": ["./src/services"], // More robust than "/src"
+      "@store/*": ["./src/store"], // More robust than "/src"
+      "@styles/*": ["./src/styles"], // More robust than "/src"
+    }
+  }
+}
