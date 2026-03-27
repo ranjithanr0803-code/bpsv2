@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Typography,
@@ -7,7 +7,6 @@ import {
   Box,
   Card,
   CardContent,
-  CardMedia,
   CardActions,
   Stack,
   useTheme,
@@ -18,6 +17,7 @@ import {
   alpha,
   Divider,
   IconButton,
+  Chip,
 } from "@mui/material";
 import { styled } from '@mui/material/styles';
 import {
@@ -34,8 +34,11 @@ import {
   CheckCircle,
   ChevronRight,
   Launch,
+  TrendingUp,
+  Speed,
+  EmojiObjects,
 } from "@mui/icons-material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 // Styled Components
 const HeroSection = styled(Box)(({ theme }) => ({
@@ -112,7 +115,7 @@ const CardMediaContainer = styled(Box)(({ theme }) => ({
 const ServiceFeature = styled(Box)(({ theme }) => ({
   display: 'flex',
   alignItems: 'center',
-  padding: theme.spacing(1.5, 0),
+  padding: theme.spacing(1, 0),
   '& .MuiSvgIcon-root': {
     color: theme.palette.primary.main,
     marginRight: theme.spacing(2),
@@ -129,7 +132,7 @@ const ExpandableContent = styled(Box)(({ theme, expanded }) => ({
 
 const servicesData = [
   {
-    id: 1,
+    id: "name-plates",
     title: "Industrial Name Plates",
     subtitle: "Premium Metal & Custom Plates",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -143,10 +146,12 @@ const servicesData = [
       "Instruction & Warning Plates"
     ],
     details: "Manufactured using premium materials with precise etching, laser marking, and anodizing technologies. Corrosion-resistant, durable, and designed for industrial environments.",
-    link: "/service/name-plates"
+    link: "/service/name-plates",
+    icon: <Label />,
+    tags: ["Industrial", "Metal", "Durable"]
   },
   {
-    id: 2,
+    id: "stickers",
     title: "Stickers & Labels",
     subtitle: "Industrial & Commercial Solutions",
     image: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -160,10 +165,12 @@ const servicesData = [
       "Barcode & QR Code Labels"
     ],
     details: "UV-resistant, waterproof, and durable stickers suitable for indoor and outdoor applications. Perfect for product labeling, safety signs, and brand promotion.",
-    link: "/service/stickers"
+    link: "/service/stickers",
+    icon: <LocalOffer />,
+    tags: ["Custom", "Weatherproof", "Durable"]
   },
   {
-    id: 3,
+    id: "anodized",
     title: "Anodized Printing",
     subtitle: "Advanced Surface Treatment",
     image: "https://images.unsplash.com/photo-1581094794329-c8112a89af12?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -177,10 +184,12 @@ const servicesData = [
       "Custom Color Matching"
     ],
     details: "Enhance aluminum surfaces with anodizing for improved durability, corrosion resistance, and aesthetic appeal. Perfect for industrial and decorative applications.",
-    link: "/service/anodized"
+    link: "/service/anodized",
+    icon: <PrecisionManufacturing />,
+    tags: ["Premium", "Corrosion Resistant", "Aesthetic"]
   },
   {
-    id: 4,
+    id: "laser",
     title: "Laser Marking",
     subtitle: "Precision Engraving Solutions",
     image: "https://images.unsplash.com/photo-1515191107209-c28698631303?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
@@ -194,15 +203,51 @@ const servicesData = [
       "Multiple Material Support"
     ],
     details: "Permanent marking solutions for metals, plastics, and other materials. Ideal for part identification, serial numbers, and branding with superior precision.",
-    link: "/service/laser"
+    link: "/service/laser",
+    icon: <QrCode2 />,
+    tags: ["Precision", "Permanent", "Versatile"]
   }
 ];
 
 const Services = () => {
   const theme = useTheme();
   const navigate = useNavigate();
+  const location = useLocation();
   const isMobile = useMediaQuery(theme.breakpoints.down('md'));
   const [expandedCard, setExpandedCard] = useState(null);
+
+  // Handle hash links on page load and navigation
+  useEffect(() => {
+    const handleHashNavigation = () => {
+      if (location.hash) {
+        const elementId = location.hash.substring(1); // Remove the '#'
+        const element = document.getElementById(elementId);
+        if (element) {
+          setTimeout(() => {
+            element.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start',
+              inline: 'nearest'
+            });
+          }, 500);
+        } else {
+          // If element not found immediately, try again after a short delay
+          setTimeout(() => {
+            const retryElement = document.getElementById(elementId);
+            if (retryElement) {
+              retryElement.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start',
+                inline: 'nearest'
+              });
+            }
+          }, 1000);
+        }
+      }
+    };
+
+    handleHashNavigation();
+  }, [location]);
 
   const handleCardExpand = (cardId) => {
     setExpandedCard(expandedCard === cardId ? null : cardId);
@@ -210,6 +255,15 @@ const Services = () => {
 
   const handleExploreClick = (link) => {
     navigate(link);
+  };
+
+  const scrollToService = (serviceId) => {
+    const element = document.getElementById(serviceId);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+      // Update URL without reload
+      window.history.pushState({}, '', `/service#${serviceId}`);
+    }
   };
 
   return (
@@ -230,7 +284,7 @@ const Services = () => {
               >
                 Our Professional Services
               </Typography>
-              
+
               <Typography
                 variant="h5"
                 sx={{
@@ -243,7 +297,7 @@ const Services = () => {
               >
                 Premium industrial printing and manufacturing solutions for businesses across Karnataka
               </Typography>
-              
+
               <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap">
                 <Button
                   variant="contained"
@@ -273,6 +327,37 @@ const Services = () => {
         </Container>
       </HeroSection>
 
+      {/* Quick Navigation Chips */}
+      <Box sx={{ py: 4, backgroundColor: 'background.default', borderBottom: `1px solid ${alpha(theme.palette.primary.main, 0.1)}` }}>
+        <Container maxWidth="lg">
+          <Stack direction="row" spacing={2} justifyContent="center" flexWrap="wrap" useFlexGap>
+            {servicesData.map((service) => (
+              <Chip
+                key={service.id}
+                icon={service.icon}
+                label={service.title}
+                onClick={() => scrollToService(service.id)}
+                sx={{
+                  px: 1,
+                  py: 2.5,
+                  fontSize: '1rem',
+                  fontWeight: 500,
+                  backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                  border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+                  cursor: 'pointer',
+                  '&:hover': {
+                    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+                    transform: 'translateY(-2px)',
+                    transition: 'all 0.2s ease',
+                  },
+                  transition: 'all 0.2s ease',
+                }}
+              />
+            ))}
+          </Stack>
+        </Container>
+      </Box>
+
       {/* Services Grid */}
       <Box sx={{ py: 10, backgroundColor: 'background.default' }}>
         <Container maxWidth="lg">
@@ -281,7 +366,7 @@ const Services = () => {
             align="center"
             fontWeight={800}
             gutterBottom
-            sx={{ 
+            sx={{
               mb: 2,
               position: 'relative',
               '&::after': {
@@ -299,14 +384,14 @@ const Services = () => {
           >
             Comprehensive Solutions
           </Typography>
-          
+
           <Typography
             variant="h6"
             align="center"
-            sx={{ 
-              mb: 8, 
-              color: 'text.secondary', 
-              maxWidth: 800, 
+            sx={{
+              mb: 8,
+              color: 'text.secondary',
+              maxWidth: 800,
               margin: '0 auto',
               fontWeight: 300,
             }}
@@ -316,7 +401,16 @@ const Services = () => {
 
           <Grid container spacing={6}>
             {servicesData.map((service, index) => (
-              <Grid item xs={12} md={6} key={service.id}>
+              <Grid
+                item
+                xs={12}
+                md={6}
+                key={service.id}
+                id={service.id}
+                sx={{
+                  scrollMarginTop: '100px', // Adds offset for fixed header
+                }}
+              >
                 <Grow in={true} timeout={1000} style={{ transitionDelay: `${index * 200}ms` }}>
                   <ServiceCard elevation={4}>
                     {/* Card Media */}
@@ -387,17 +481,39 @@ const Services = () => {
                         </Typography>
                       </ExpandableContent>
 
+                      {/* Tags */}
+                      <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap', mt: 2 }}>
+                        {service.tags.map((tag, idx) => (
+                          <Chip
+                            key={idx}
+                            label={tag}
+                            size="small"
+                            sx={{
+                              backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                              color: theme.palette.primary.main,
+                              fontWeight: 500,
+                            }}
+                          />
+                        ))}
+                      </Box>
+
                       {/* Card Actions */}
-                      <CardActions sx={{ justifyContent: 'space-between', px: 0, pt: 2 }}>
+                      <CardActions sx={{ justifyContent: 'space-between', px: 0, pt: 3, mt: 2 }}>
                         <Button
                           size="small"
                           onClick={() => handleCardExpand(service.id)}
-                          startIcon={expandedCard === service.id ? <ExpandMore /> : <ChevronRight />}
-                          sx={{ fontWeight: 600, color: 'primary.main' }}
+                          endIcon={expandedCard === service.id ? <ExpandMore sx={{ transform: 'rotate(180deg)' }} /> : <ChevronRight />}
+                          sx={{
+                            fontWeight: 600,
+                            color: 'primary.main',
+                            '&:hover': {
+                              backgroundColor: alpha(theme.palette.primary.main, 0.05),
+                            }
+                          }}
                         >
                           {expandedCard === service.id ? 'Show Less' : 'View Details'}
                         </Button>
-                        
+
                         <Button
                           variant="contained"
                           size="medium"
@@ -409,6 +525,10 @@ const Services = () => {
                             fontWeight: 600,
                             transition: 'all 0.3s ease',
                             background: 'linear-gradient(45deg, #1E90FF, #00BFFF)',
+                            '&:hover': {
+                              background: 'linear-gradient(45deg, #00BFFF, #1E90FF)',
+                              transform: 'translateX(5px)',
+                            }
                           }}
                         >
                           Explore Now
@@ -434,7 +554,7 @@ const Services = () => {
                     variant="h2"
                     fontWeight={800}
                     gutterBottom
-                    sx={{ 
+                    sx={{
                       color: 'primary.dark',
                       position: 'relative',
                       display: 'inline-block',
@@ -452,11 +572,11 @@ const Services = () => {
                   >
                     Custom Solutions
                   </Typography>
-                  
+
                   <Typography variant="h6" color="text.secondary" paragraph sx={{ mb: 4, fontWeight: 300 }}>
                     Tailored to Your Specific Requirements
                   </Typography>
-                  
+
                   <Stack spacing={3} sx={{ mb: 4 }}>
                     <ServiceFeature>
                       <DesignServices />
@@ -469,7 +589,7 @@ const Services = () => {
                         </Typography>
                       </Box>
                     </ServiceFeature>
-                    
+
                     <ServiceFeature>
                       <Factory />
                       <Box>
@@ -481,7 +601,7 @@ const Services = () => {
                         </Typography>
                       </Box>
                     </ServiceFeature>
-                    
+
                     <ServiceFeature>
                       <Security />
                       <Box>
@@ -497,7 +617,7 @@ const Services = () => {
                 </Box>
               </Zoom>
             </Grid>
-            
+
             <Grid item xs={12} md={6}>
               <Fade in={true} timeout={1500}>
                 <Box
@@ -514,64 +634,64 @@ const Services = () => {
                   <Typography variant="h3" fontWeight={700} gutterBottom>
                     Why Choose Our Services?
                   </Typography>
-                  
+
                   <Stack spacing={3} sx={{ mt: 4 }}>
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ 
-                        backgroundColor: 'rgba(255,255,255,0.2)', 
-                        borderRadius: '50%', 
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <Box sx={{
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
                         p: 1.5,
                         mr: 3,
                         display: 'flex',
                       }}>
-                        <SettingsEthernet />
+                        <Speed />
                       </Box>
                       <Box>
                         <Typography variant="h6" fontWeight={600}>
-                          State-of-the-Art Technology
+                          Fast Turnaround Time
                         </Typography>
                         <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                          Latest machinery and techniques for superior precision and quality.
+                          Efficient production processes ensuring quick delivery without compromising quality.
                         </Typography>
                       </Box>
                     </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ 
-                        backgroundColor: 'rgba(255,255,255,0.2)', 
-                        borderRadius: '50%', 
+
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <Box sx={{
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
                         p: 1.5,
                         mr: 3,
                         display: 'flex',
                       }}>
-                        {/* <LocalShipping /> */}
+                        <TrendingUp />
                       </Box>
                       <Box>
                         <Typography variant="h6" fontWeight={600}>
-                          Pan-Karnataka Delivery
+                          Competitive Pricing
                         </Typography>
                         <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                          Reliable logistics network for timely delivery across the state.
+                          Best value for money with high-quality materials and superior craftsmanship.
                         </Typography>
                       </Box>
                     </Box>
-                    
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ 
-                        backgroundColor: 'rgba(255,255,255,0.2)', 
-                        borderRadius: '50%', 
+
+                    <Box sx={{ display: 'flex', alignItems: 'flex-start' }}>
+                      <Box sx={{
+                        backgroundColor: 'rgba(255,255,255,0.2)',
+                        borderRadius: '50%',
                         p: 1.5,
                         mr: 3,
                         display: 'flex',
                       }}>
-                        <PrecisionManufacturing />
+                        <EmojiObjects />
                       </Box>
                       <Box>
                         <Typography variant="h6" fontWeight={600}>
-                          Expert Craftsmanship
+                          Technical Expertise
                         </Typography>
                         <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                          Skilled artisans with years of experience in industrial printing.
+                          Years of industry experience with skilled professionals and modern technology.
                         </Typography>
                       </Box>
                     </Box>
@@ -584,8 +704,8 @@ const Services = () => {
       </Box>
 
       {/* CTA Section */}
-      <Box sx={{ 
-        py: 8, 
+      <Box sx={{
+        py: 8,
         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
         color: 'white',
       }}>
@@ -595,27 +715,27 @@ const Services = () => {
               variant="h3"
               fontWeight={900}
               gutterBottom
-              sx={{ 
+              sx={{
                 fontSize: { xs: '2rem', md: '2.5rem' },
                 mb: 3,
               }}
             >
               Ready to Discuss Your Project?
             </Typography>
-            
+
             <Typography
               variant="h6"
-              sx={{ 
-                maxWidth: 800, 
-                margin: '0 auto', 
-                mb: 6, 
+              sx={{
+                maxWidth: 800,
+                margin: '0 auto',
+                mb: 6,
                 opacity: 0.95,
                 fontWeight: 300,
               }}
             >
               Contact us for a free consultation and custom quote tailored to your specific needs
             </Typography>
-            
+
             <Button
               variant="contained"
               size="large"

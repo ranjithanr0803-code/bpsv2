@@ -6,7 +6,6 @@ import {
   Typography,
   Button,
   Container,
-  Menu,
   MenuItem,
   useTheme,
   useMediaQuery,
@@ -19,6 +18,10 @@ import {
   Collapse,
   alpha,
   Grow,
+  Paper,
+  Popper,
+  ClickAwayListener,
+  Fade,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import {
@@ -35,6 +38,7 @@ import {
   LocalOffer,
   ArrowRight,
   KeyboardArrowDown,
+  ChevronRight,
 } from "@mui/icons-material";
 import { useNavigate, useLocation } from "react-router-dom";
 import Logo from "../../images/BPS_Logo-removebg-preview (1).png";
@@ -85,43 +89,73 @@ const NavButton = styled(Button)(({ theme, active }) => ({
   },
 }));
 
-const StyledMenu = styled(Menu)(({ theme }) => ({
-  "& .MuiPaper-root": {
-    borderRadius: theme.spacing(2),
-    marginTop: theme.spacing(1.5),
-    minWidth: 220,
-    overflow: "visible",
-    boxShadow: theme.shadows[12],
-    backdropFilter: "blur(8px)",
-    background: alpha("#fff", 0.98),
-    border: `1px solid ${alpha(theme.palette.primary.main, 0.2)}`,
+const StyledPopperPaper = styled(Paper)(({ theme }) => ({
+  borderRadius: theme.spacing(2),
+  minWidth: 260,
+  overflow: "hidden",
+  boxShadow: theme.shadows[12],
+  background: alpha("#fff", 0.98),
+  backdropFilter: "blur(8px)",
+  border: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+  position: "relative",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    top: -6,
+    left: "50%",
+    transform: "translateX(-50%) rotate(45deg)",
+    width: 12,
+    height: 12,
+    backgroundColor: alpha("#fff", 0.98),
+    borderLeft: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+    borderTop: `1px solid ${alpha(theme.palette.primary.main, 0.15)}`,
+    zIndex: 0,
+  },
+}));
+
+const DropdownMenuItem = styled(MenuItem)(({ theme }) => ({
+  padding: theme.spacing(1.5, 2),
+  margin: theme.spacing(0.5, 1),
+  borderRadius: theme.spacing(1.5),
+  fontSize: "0.95rem",
+  transition: "all 0.25s cubic-bezier(0.4, 0, 0.2, 1)",
+  position: "relative",
+  overflow: "hidden",
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    left: 0,
+    top: 0,
+    bottom: 0,
+    width: 3,
+    backgroundColor: theme.palette.primary.main,
+    transform: "scaleY(0)",
+    transition: "transform 0.25s ease",
+  },
+  "&:hover": {
+    backgroundColor: alpha(theme.palette.primary.main, 0.08),
+    transform: "translateX(4px)",
     "&::before": {
-      content: '""',
-      position: "absolute",
-      top: -8,
-      left: "50%",
-      transform: "translateX(-50%)",
-      width: 0,
-      height: 0,
-      borderLeft: "8px solid transparent",
-      borderRight: "8px solid transparent",
-      borderBottom: `8px solid ${alpha("#fff", 0.98)}`,
+      transform: "scaleY(1)",
     },
-    "& .MuiMenuItem-root": {
-      padding: theme.spacing(1.2, 2),
-      fontSize: "0.95rem",
-      transition: "all 0.2s ease",
-      "&:hover": {
-        backgroundColor: alpha(theme.palette.primary.main, 0.08),
-        transform: "translateX(4px)",
-      },
-      "& .MuiSvgIcon-root": {
-        marginRight: theme.spacing(1.5),
-        color: theme.palette.primary.main,
-        fontSize: "1.2rem",
-      },
+    "& .arrow-icon": {
+      transform: "translateX(4px)",
+      opacity: 1,
     },
   },
+  "& .MuiSvgIcon-root": {
+    marginRight: theme.spacing(1.5),
+    color: theme.palette.primary.main,
+    fontSize: "1.2rem",
+    transition: "all 0.2s ease",
+  },
+}));
+
+const ArrowIcon = styled(ChevronRight)(({ theme }) => ({
+  fontSize: "1rem",
+  opacity: 0,
+  transition: "all 0.25s ease",
+  color: theme.palette.primary.main,
 }));
 
 const MobileDrawer = styled(Drawer)(({ theme }) => ({
@@ -148,14 +182,15 @@ const NAV_ITEMS = [
     path: "/service",
     icon: <Store />,
     dropdown: [
-      { title: "Name Plates", icon: <Label />, path: "/service#name-plates" },
-      { title: "Stickers", icon: <LocalOffer />, path: "/service#stickers" },
+      { title: "Name Plates", icon: <Label />, path: "/service#name-plates", description: "Custom name plates for all purposes" },
+      { title: "Stickers", icon: <LocalOffer />, path: "/service#stickers", description: "High-quality durable stickers" },
       {
         title: "Anodized Printing",
         icon: <Factory />,
         path: "/service#anodized",
+        description: "Premium anodized aluminum printing"
       },
-      { title: "Laser Marking", icon: <Business />, path: "/service#laser" },
+      { title: "Laser Marking", icon: <Business />, path: "/service#laser", description: "Precision laser marking solutions" },
     ],
   },
   {
@@ -163,12 +198,13 @@ const NAV_ITEMS = [
     path: "/services",
     icon: <Business />,
     dropdown: [
-      { title: "Custom Design", icon: <Label />, path: "/services#design" },
-      { title: "Bulk Orders", icon: <Factory />, path: "/services#bulk" },
+      { title: "Custom Design", icon: <Label />, path: "/services#design", description: "Tailored designs for your needs" },
+      { title: "Bulk Orders", icon: <Factory />, path: "/services#bulk", description: "Special pricing for volume orders" },
       {
         title: "Consultation",
         icon: <Business />,
         path: "/services#consultation",
+        description: "Expert advice and guidance"
       },
     ],
   },
@@ -183,34 +219,52 @@ const Navbar = () => {
 
   const [mobileOpen, setMobileOpen] = useState(false);
   const [expandedItem, setExpandedItem] = useState(null);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [activeMenuItem, setActiveMenuItem] = useState(null);
-  const timeoutRef = useRef(null);
+  const [openDropdown, setOpenDropdown] = useState(null);
+  const [activeItem, setActiveItem] = useState(null);
+  const anchorRef = useRef(null);
+  const hoverTimeoutRef = useRef(null);
 
   const handleMobileDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
   const handleDropdownOpen = (event, item) => {
-    if (timeoutRef.current) clearTimeout(timeoutRef.current);
-    // Get the actual button element
-    const buttonElement = event.currentTarget;
-    if (buttonElement) {
-      setAnchorEl(buttonElement);
-      setActiveMenuItem(item);
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
     }
+    setActiveItem(item);
+    setOpenDropdown(true);
+    anchorRef.current = event.currentTarget;
   };
 
   const handleDropdownClose = () => {
-    timeoutRef.current = setTimeout(() => {
-      setAnchorEl(null);
-      setActiveMenuItem(null);
-    }, 150);
+    hoverTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(false);
+      setActiveItem(null);
+      anchorRef.current = null;
+    }, 200);
+  };
+
+  const handlePopperEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
+  };
+
+  const handlePopperLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setOpenDropdown(false);
+      setActiveItem(null);
+      anchorRef.current = null;
+    }, 200);
   };
 
   const handleDropdownItemClick = (path) => {
-    setAnchorEl(null);
-    setActiveMenuItem(null);
+    setOpenDropdown(false);
+    setActiveItem(null);
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+    }
     navigate(path);
   };
 
@@ -229,7 +283,9 @@ const Navbar = () => {
 
   useEffect(() => {
     return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      if (hoverTimeoutRef.current) {
+        clearTimeout(hoverTimeoutRef.current);
+      }
     };
   }, []);
 
@@ -312,8 +368,13 @@ const Navbar = () => {
                         {subItem.icon}
                         <ListItemText
                           primary={subItem.title}
+                          secondary={subItem.description}
                           sx={{ ml: 2 }}
                           primaryTypographyProps={{ fontSize: "0.9rem" }}
+                          secondaryTypographyProps={{
+                            fontSize: "0.75rem",
+                            color: alpha("#fff", 0.7)
+                          }}
                         />
                       </Box>
                     </MobileMenuItem>
@@ -399,10 +460,7 @@ const Navbar = () => {
                           <KeyboardArrowDown
                             sx={{
                               transition: "transform 0.2s",
-                              transform:
-                                activeMenuItem === item
-                                  ? "rotate(180deg)"
-                                  : "none",
+                              transform: openDropdown && activeItem === item ? "rotate(180deg)" : "none",
                             }}
                           />
                         }
@@ -461,49 +519,73 @@ const Navbar = () => {
         </Container>
       </StyledAppBar>
 
-      {/* Dropdown Menu */}
-      {activeMenuItem && activeMenuItem.dropdown && (
-        <StyledMenu
-          open={Boolean(anchorEl)}
-          anchorEl={anchorEl}
-          onClose={() => setActiveMenuItem(null)}
-          anchorOrigin={{
-            vertical: "bottom",
-            horizontal: "center",
-          }}
-          transformOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          TransitionComponent={Grow}
-          TransitionProps={{ timeout: 200 }}
-          elevation={4}
-          keepMounted
-          MenuListProps={{
-            onMouseEnter: () => {
-              if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      {/* Popper Dropdown Menu */}
+      {activeItem && activeItem.dropdown && (
+        <Popper
+          open={openDropdown}
+          anchorEl={anchorRef.current}
+          placement="bottom-start"
+          transition
+          modifiers={[
+            {
+              name: 'offset',
+              options: {
+                offset: [0, 8],
+              },
             },
-            onMouseLeave: handleDropdownClose,
-          }}
+            {
+              name: 'preventOverflow',
+              options: {
+                boundary: 'viewport',
+                padding: 16,
+              },
+            },
+          ]}
+          sx={{ zIndex: 1300 }}
         >
-          {activeMenuItem.dropdown.map((subItem) => (
-            <MenuItem
-              key={subItem.title}
-              onClick={() => handleDropdownItemClick(subItem.path)}
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <Box sx={{ display: "flex", alignItems: "center" }}>
-                {subItem.icon}
-                {subItem.title}
-              </Box>
-              <ArrowRight sx={{ fontSize: "1rem", opacity: 0.6 }} />
-            </MenuItem>
-          ))}
-        </StyledMenu>
+          {({ TransitionProps }) => (
+            <Fade {...TransitionProps} timeout={200}>
+              <StyledPopperPaper
+                onMouseEnter={handlePopperEnter}
+                onMouseLeave={handlePopperLeave}
+              >
+                <Box sx={{ py: 1 }}>
+                  {activeItem.dropdown.map((subItem, index) => (
+                    <DropdownMenuItem
+                      key={subItem.title}
+                      onClick={() => handleDropdownItemClick(subItem.path)}
+                      sx={{
+                        animation: `fadeInUp 0.3s cubic-bezier(0.4, 0, 0.2, 1) ${index * 0.05}s both`,
+                      }}
+                    >
+                      <Box sx={{ display: "flex", alignItems: "center", flex: 1 }}>
+                        {subItem.icon}
+                        <Box>
+                          <Typography variant="body1" fontWeight={500}>
+                            {subItem.title}
+                          </Typography>
+                          {subItem.description && (
+                            <Typography
+                              variant="caption"
+                              sx={{
+                                color: "text.secondary",
+                                display: "block",
+                                mt: 0.5,
+                              }}
+                            >
+                              {subItem.description}
+                            </Typography>
+                          )}
+                        </Box>
+                      </Box>
+                      <ArrowIcon className="arrow-icon" />
+                    </DropdownMenuItem>
+                  ))}
+                </Box>
+              </StyledPopperPaper>
+            </Fade>
+          )}
+        </Popper>
       )}
 
       {/* Mobile Navigation Drawer */}
@@ -511,6 +593,22 @@ const Navbar = () => {
 
       {/* Spacer for fixed navbar */}
       <Toolbar />
+
+      {/* Add animation keyframes */}
+      <style>
+        {`
+          @keyframes fadeInUp {
+            from {
+              opacity: 0;
+              transform: translateY(10px);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0);
+            }
+          }
+        `}
+      </style>
     </>
   );
 };
