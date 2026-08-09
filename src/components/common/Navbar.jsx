@@ -45,13 +45,11 @@ import Logo from "../../images/BPS_Logo-removebg-preview (1).png";
 
 // Styled Components
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
-  background: "linear-gradient(135deg, #2c3e50 0%, #34495e 100%)",
-  boxShadow: theme.shadows[4],
+  background: "rgba(8, 35, 48, 0.96)",
+  backdropFilter: "blur(14px)",
+  boxShadow: "0 8px 30px rgba(8, 35, 48, 0.14)",
   transition: "all 0.3s ease",
-  "&:hover": {
-    background: "linear-gradient(135deg, #34495e 0%, #2c3e50 100%)",
-    boxShadow: theme.shadows[8],
-  },
+  "&:hover": { background: "rgba(8, 35, 48, 0.98)" },
 }));
 
 const LogoContainer = styled(Box)(({ theme }) => ({
@@ -64,7 +62,7 @@ const LogoContainer = styled(Box)(({ theme }) => ({
 }));
 
 const NavButton = styled(Button)(({ theme, active }) => ({
-  color: active ? theme.palette.primary.light : "white",
+  color: active ? theme.palette.secondary.light : "rgba(255,255,255,0.82)",
   fontWeight: active ? 600 : 400,
   fontSize: "1rem",
   textTransform: "none",
@@ -77,7 +75,7 @@ const NavButton = styled(Button)(({ theme, active }) => ({
     left: "50%",
     width: active ? "80%" : "0%",
     height: 2,
-    backgroundColor: theme.palette.primary.light,
+    backgroundColor: theme.palette.secondary.main,
     transform: "translateX(-50%)",
     transition: "width 0.3s ease",
   },

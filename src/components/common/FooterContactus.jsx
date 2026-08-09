@@ -150,8 +150,8 @@ const FooterContactus = () => {
   const quickLinks = [
     { text: 'Home', icon: <Home />, path: '/' },
     { text: 'About Us', icon: <Info />, path: '/about' },
-    { text: 'Products', icon: <Store />, path: '/products' },
-    { text: 'Services', icon: <ArrowForward />, path: '/services' },
+    { text: 'Products', icon: <Store />, path: '/service' },
+    { text: 'Services', icon: <ArrowForward />, path: '/service' },
     { text: 'Contact Us', icon: <ContactMail />, path: '/contact' },
   ];
 

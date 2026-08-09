@@ -42,7 +42,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 // Styled Components
 const HeroSection = styled(Box)(({ theme }) => ({
-  background: 'linear-gradient(135deg, #1E90FF 0%, #0b5bb5 100%)',
+  background: 'linear-gradient(135deg, #0f766e 0%, #0b2533 100%)',
   minHeight: '40vh',
   display: 'flex',
   alignItems: 'center',

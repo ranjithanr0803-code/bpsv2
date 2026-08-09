@@ -37,10 +37,7 @@ import {
   CheckCircle,
 } from "@mui/icons-material";
 import { useNavigate } from "react-router";
-import AboutUS from "./aboutUS";
-import SixthPage from "./landing_page/SixthPage";
-import { CustomImageCard } from "@common";
-import { WhatsApp as WhatsAppContact, FooterContactus } from "@common";
+import { WhatsApp as WhatsAppContact } from "@common";
 
 // Images (keep your existing imports)
 import Img69 from "../images/img69.jpg";
@@ -75,7 +72,7 @@ const HeroOverlay = styled(Box)({
   right: 0,
   bottom: 0,
   background:
-    "linear-gradient(135deg, rgba(41, 128, 185, 0.8) 0%, rgba(52, 152, 219, 0.6) 100%)",
+    "linear-gradient(135deg, rgba(8, 55, 62, 0.88) 0%, rgba(15, 118, 110, 0.58) 70%, rgba(245, 158, 11, 0.28) 100%)",
   zIndex: 1,
 });
 
@@ -190,12 +187,6 @@ const WelcomePage = () => {
       <HeroSection>
         <HeroOverlay />
 
-        <FloatingGST>
-          <Typography variant="subtitle1" fontWeight="bold" color="primary">
-            GSTIN: 22AAAAA0000A1Z5
-          </Typography>
-        </FloatingGST>
-
         <HeroContent>
           <Container maxWidth="lg">
             <Fade in={true} timeout={1000}>
@@ -238,7 +229,7 @@ const WelcomePage = () => {
                   </Box>
                   <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
                     <Phone sx={{ fontSize: 20 }} />
-                    <Typography variant="body1">+91 12345 67890</Typography>
+                    <Typography variant="body1">+91 80 4186 8000</Typography>
                   </Box>
                 </Stack>
 
@@ -544,11 +535,6 @@ const WelcomePage = () => {
         </Container>
       </Box>
 
-      {/* Sixth Page Component */}
-      <SixthPage />
-
-      {/* About US Component */}
-      <AboutUS />
     </>
   );
 };

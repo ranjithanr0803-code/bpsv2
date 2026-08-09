@@ -147,8 +147,7 @@ const Contact = () => {
       title: "Registered Office",
       details: [
         "Baironics Printing Solutions",
-        "Exact Address Line 1",
-        "Area, Karnataka - 560001",
+        "Bangalore, Karnataka",
         "India"
       ],
       link: "https://maps.app.goo.gl/BLJdVHp4uiGapyMn8",
